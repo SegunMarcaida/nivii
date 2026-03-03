@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.DS_Store
+tests/
+CLAUDE.md
+app/CLAUDE.md
+app/**/CLAUDE.md
+app/**/__pycache__/

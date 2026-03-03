@@ -11,5 +11,5 @@ os.environ.setdefault(
     "sqlite+aiosqlite:///./data/confectionery.db",
 )
 os.environ.setdefault("OLLAMA_BASE_URL", "http://localhost:11434")
-os.environ.setdefault("OLLAMA_MODEL", "a-kore/Arctic-Text2SQL-R1-7B")
+os.environ.setdefault("OLLAMA_MODEL", "hf.co/mradermacher/Arctic-Text2SQL-R1-7B-GGUF:Q4_K_M")
 os.environ.setdefault("OLLAMA_MODEL_BASE", "qwen2.5-coder:3b")

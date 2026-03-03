@@ -8,11 +8,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.config import ALL_MODELS, OLLAMA_BASE_URL
 from app.db.database import get_engine
 from app.routers.query import router
 from app.routers.stream import router as stream_router
-from app.services.answer import close_answer_client
-from app.services.nl2sql import close_ollama_client
+from app.services.ollama_client import close_clients
 
 _log_level = getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
 logging.basicConfig(
@@ -48,12 +48,8 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         log.warning("Database connectivity check FAILED: %s", exc)
 
-    ollama_base = os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
     await asyncio.gather(
-        _warmup_model(ollama_base, os.environ.get("OLLAMA_MODEL", "a-kore/Arctic-Text2SQL-R1-7B")),
-        _warmup_model(ollama_base, os.environ.get("OLLAMA_MODEL_BASE", "qwen2.5-coder:3b")),
-        _warmup_model(ollama_base, os.environ.get("ANSWER_MODEL", "llama3.2:1b")),
-        _warmup_model(ollama_base, os.environ.get("ANSWER_MODEL_BIG", "llama3.2:3b")),
+        *(_warmup_model(OLLAMA_BASE_URL, m) for m in ALL_MODELS),
         return_exceptions=True,
     )
 
@@ -62,8 +58,7 @@ async def lifespan(app: FastAPI):
     # ── Shutdown ───────────────────────────────────────────────────────────────
     log.info("API shutting down. Disposing database engine...")
     await get_engine().dispose()
-    await close_ollama_client()
-    await close_answer_client()
+    await close_clients()
 
 
 app = FastAPI(

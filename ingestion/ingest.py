@@ -23,6 +23,7 @@ import logging
 import os
 import sqlite3
 import sys
+import time
 from datetime import datetime
 
 import pandas as pd
@@ -37,7 +38,7 @@ log = logging.getLogger(__name__)
 SQLITE_DB_PATH   = os.environ.get("SQLITE_DB_PATH", "/app/data/confectionery.db")
 OLLAMA_BASE_URL  = os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
 DATA_PATH        = "/app/data.csv"
-MODEL_NAME       = os.environ.get("OLLAMA_MODEL", "a-kore/Arctic-Text2SQL-R1-7B")
+MODEL_NAME       = os.environ.get("OLLAMA_MODEL", "hf.co/mradermacher/Arctic-Text2SQL-R1-7B-GGUF:Q4_K_M")
 MODEL_NAME_BASE  = os.environ.get("OLLAMA_MODEL_BASE", "qwen2.5-coder:3b")
 ANSWER_MODEL     = os.environ.get("ANSWER_MODEL", "llama3.2:1b")
 ANSWER_MODEL_BIG = os.environ.get("ANSWER_MODEL_BIG", "llama3.2:3b")
@@ -391,6 +392,39 @@ def pull_model(model_name: str) -> None:
         raise
 
 
+def wait_for_ollama(max_wait: int = 120, initial_interval: float = 2.0) -> None:
+    """Block until Ollama responds at OLLAMA_BASE_URL/api/tags, or exit after max_wait seconds."""
+    deadline = time.monotonic() + max_wait
+    interval = initial_interval
+    attempt = 0
+    while True:
+        attempt += 1
+        try:
+            resp = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=5)
+            resp.raise_for_status()
+            log.info("Ollama is reachable at %s (attempt %d).", OLLAMA_BASE_URL, attempt)
+            return
+        except requests.exceptions.ConnectionError:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                log.error(
+                    "Ollama not reachable at %s after %ds. "
+                    "Is 'ollama serve' running on the host?",
+                    OLLAMA_BASE_URL, max_wait,
+                )
+                raise SystemExit(1)
+            wait = min(interval, remaining)
+            log.warning(
+                "Ollama not reachable (attempt %d). Retrying in %.1fs... (%.0fs remaining)",
+                attempt, wait, remaining,
+            )
+            time.sleep(wait)
+            interval = min(interval * 1.5, 10.0)
+        except requests.exceptions.RequestException as exc:
+            log.error("Unexpected error reaching Ollama: %s", exc)
+            raise SystemExit(1)
+
+
 def main() -> None:
     log.info("Ingestion service starting...")
 
@@ -440,6 +474,8 @@ def main() -> None:
             load_data(conn, df)
     finally:
         conn.close()
+
+    wait_for_ollama()
 
     for mname in (MODEL_NAME, MODEL_NAME_BASE, ANSWER_MODEL, ANSWER_MODEL_BIG):
         if model_exists(mname):

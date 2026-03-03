@@ -4,20 +4,16 @@ Zero I/O — pure string inspection.
 """
 import pytest
 
-from app.prompts.few_shot import (
-    BUSINESS_RULES,
-    FEW_SHOT_EXAMPLES,
-    SALES_DDL,
-    QueryComplexity,
+from app.prompts.builders import (
     build_arctic_correction_prompt,
     build_arctic_prompt,
     build_qwen_correction_prompt,
     build_qwen_prompt,
-    classify_complexity,
-    extract_sql,
-    extract_think,
-    is_on_topic,
 )
+from app.prompts.classification import classify_complexity, is_on_topic, QueryComplexity
+from app.prompts.parsers import extract_sql, extract_think
+from app.prompts.rules import BUSINESS_RULES, FEW_SHOT_EXAMPLES
+from app.prompts.schema import SALES_DDL
 
 
 SAMPLE_QUESTION = "What is the total revenue?"
@@ -476,6 +472,55 @@ class TestBuildArcticCorrectionPrompt:
         prompt = build_arctic_correction_prompt("q", "SELECT 1", "err")
         assert "BUSINESS RULES" in prompt
 
+    def test_uses_arctic_template_format(self):
+        """Correction prompt must use the official Arctic template structure."""
+        prompt = build_arctic_correction_prompt("q", "SELECT 1", "err")
+        assert "Task Overview:" in prompt
+        assert "Database Engine:" in prompt
+        assert "Database Schema:" in prompt
+        assert "Output Format:" in prompt
+
+    def test_no_prefilled_tags(self):
+        """<think>/<answer> must appear only in Output Format section, not pre-filled at the end."""
+        prompt = build_arctic_correction_prompt("q", "SELECT 1", "err")
+        # After the last </answer>, there should only be the CoT trigger line
+        last_answer_idx = prompt.rfind("</answer>")
+        trailing = prompt[last_answer_idx + len("</answer>"):].strip()
+        assert "Take a deep breath" in trailing
+        # The tags should appear under "Output Format:" not as standalone pre-filled content
+        assert "Output Format:" in prompt
+
+
+class TestBusinessRulesAverageDaily:
+    """Verify the AVERAGE PER-DAY METRICS business rule."""
+
+    def test_business_rules_contain_average_daily(self):
+        assert "AVERAGE PER-DAY METRICS" in BUSINESS_RULES
+
+    def test_business_rules_mention_subquery_pattern(self):
+        assert "subquery" in BUSINESS_RULES.lower()
+
+    def test_business_rules_warn_against_avg_directly(self):
+        assert "per-row average" in BUSINESS_RULES
+
+
+class TestFewShotExampleG:
+    """Verify EXAMPLE G teaches average daily revenue subquery pattern."""
+
+    def test_example_g_exists(self):
+        assert "EXAMPLE G" in FEW_SHOT_EXAMPLES
+
+    def test_example_g_has_subquery(self):
+        start = FEW_SHOT_EXAMPLES.index("EXAMPLE G")
+        example_g = FEW_SHOT_EXAMPLES[start:]
+        assert "GROUP BY sale_date" in example_g
+        assert "AVG(daily_revenue)" in example_g
+
+    def test_example_g_wrong_pattern(self):
+        start = FEW_SHOT_EXAMPLES.index("EXAMPLE G")
+        example_g = FEW_SHOT_EXAMPLES[start:]
+        assert "per-row average" in example_g.lower()
+
 
 # ── Qwen prompt builder tests ─────────────────────────────────────────────────
 
@@ -528,3 +573,93 @@ class TestBuildQwenPrompt:
     def test_no_write_sql_query_prefix(self):
         """Template-looking prefix removed to prevent document-continuation mode."""
         assert "Write a SQLite query" not in build_qwen_prompt("test")
+
+    def test_has_product_category_rule(self):
+        """Qwen must know about product_category and the single-table constraint."""
+        p = build_qwen_prompt("test")
+        assert "product_category" in p
+        assert "Never JOIN" in p
+
+
+# ── Schema completeness — product_category, product_unit, sale_month ─────────
+
+
+class TestDDLDerivedColumns:
+    """Verify SALES_DDL exposes all derived columns created at ingestion."""
+
+    def test_ddl_has_product_category(self):
+        """product_category must be in DDL so models don't hallucinate a products table."""
+        assert "product_category" in SALES_DDL
+
+    def test_ddl_product_category_has_values(self):
+        """Category values must be enumerated so models don't guess them."""
+        assert "Alfajor" in SALES_DDL
+        assert "Galletita" in SALES_DDL
+        assert "Conito" in SALES_DDL
+
+    def test_ddl_has_product_unit(self):
+        assert "product_unit" in SALES_DDL
+
+    def test_ddl_product_unit_has_values(self):
+        assert "'1u'" in SALES_DDL
+        assert "'12u'" in SALES_DDL
+
+    def test_ddl_has_sale_month(self):
+        assert "sale_month" in SALES_DDL
+
+    def test_ddl_has_ticket_series(self):
+        assert "ticket_series" in SALES_DDL
+
+    def test_ddl_no_products_table_note(self):
+        """DDL product_category comment must say no products table exists."""
+        assert "No products table" in SALES_DDL
+
+
+class TestBusinessRulesSchemaConstraint:
+    """Verify single-table constraint prevents JOIN hallucination."""
+
+    def test_one_table_constraint_exists(self):
+        assert "exactly one table" in BUSINESS_RULES.lower()
+
+    def test_forbids_products_table(self):
+        """Explicit negative constraint must name the products table."""
+        lower = BUSINESS_RULES.lower()
+        assert "products" in lower
+        assert "categories" in lower
+
+    def test_mentions_product_category_column(self):
+        assert "product_category" in BUSINESS_RULES
+
+
+class TestFewShotExampleH:
+    """Verify EXAMPLE H teaches category queries using the sales table."""
+
+    def test_example_h_exists(self):
+        assert "EXAMPLE H" in FEW_SHOT_EXAMPLES
+
+    def test_example_h_uses_product_category(self):
+        start = FEW_SHOT_EXAMPLES.index("EXAMPLE H")
+        example_h = FEW_SHOT_EXAMPLES[start:]
+        correct_start = example_h.index("Correct:")
+        wrong_start = example_h.index("Wrong:")
+        correct_section = example_h[correct_start:wrong_start]
+        assert "product_category" in correct_section
+        assert "JOIN" not in correct_section
+
+    def test_example_h_wrong_names_products_table(self):
+        start = FEW_SHOT_EXAMPLES.index("EXAMPLE H")
+        example_h = FEW_SHOT_EXAMPLES[start:]
+        assert "products" in example_h.lower()
+
+
+class TestOnTopicCategoryKeywords:
+    """Verify category-related keywords pass the on-topic check."""
+
+    def test_category_keyword_on_topic(self):
+        assert is_on_topic("Show me revenue by category") is True
+
+    def test_categoria_keyword_on_topic(self):
+        assert is_on_topic("Ingreso por categoria de producto") is True
+
+    def test_packaging_keyword_on_topic(self):
+        assert is_on_topic("Which packaging sells best?") is True

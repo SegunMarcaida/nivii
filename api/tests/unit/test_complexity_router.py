@@ -7,7 +7,7 @@ HARD   → Arctic (window functions, per-group top-N, period-over-period, anti-j
 """
 import pytest
 
-from app.prompts.few_shot import QueryComplexity, classify_complexity
+from app.prompts.classification import QueryComplexity, classify_complexity
 
 
 # ── SIMPLE queries ────────────────────────────────────────────────────────────

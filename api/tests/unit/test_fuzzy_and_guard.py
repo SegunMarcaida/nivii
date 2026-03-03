@@ -5,7 +5,7 @@ Zero I/O — pure function testing.
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from app.prompts.few_shot import (
+from app.prompts.classification import (
     QueryComplexity,
     classify_complexity,
     is_on_topic,

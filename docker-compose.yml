@@ -11,7 +11,7 @@ services:
       PYTHONUNBUFFERED: "1"
       SQLITE_DB_PATH: /app/data/confectionery.db
       OLLAMA_BASE_URL: http://host.docker.internal:11434
-      OLLAMA_MODEL: a-kore/Arctic-Text2SQL-R1-7B
+      OLLAMA_MODEL: hf.co/mradermacher/Arctic-Text2SQL-R1-7B-GGUF:Q4_K_M
       OLLAMA_MODEL_BASE: qwen2.5-coder:3b
       ANSWER_MODEL: llama3.2:1b
       ANSWER_MODEL_BIG: llama3.2:3b
@@ -32,7 +32,7 @@ services:
       LOG_LEVEL: "DEBUG"
       DATABASE_URL: sqlite+aiosqlite:////app/data/confectionery.db
       OLLAMA_BASE_URL: http://host.docker.internal:11434
-      OLLAMA_MODEL: a-kore/Arctic-Text2SQL-R1-7B
+      OLLAMA_MODEL: hf.co/mradermacher/Arctic-Text2SQL-R1-7B-GGUF:Q4_K_M
       OLLAMA_MODEL_BASE: qwen2.5-coder:3b
       ANSWER_MODEL: llama3.2:1b
       ANSWER_MODEL_BIG: llama3.2:3b

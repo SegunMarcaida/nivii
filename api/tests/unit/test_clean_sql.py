@@ -4,7 +4,7 @@ Zero I/O — pure string transformation.
 """
 import pytest
 
-from app.prompts.few_shot import extract_sql
+from app.prompts.parsers import extract_sql
 
 
 @pytest.mark.unit

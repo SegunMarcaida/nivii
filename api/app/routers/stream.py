@@ -7,14 +7,10 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import ANSWER_MODEL, ANSWER_MODEL_BIG
 from app.db.database import get_db
+from app.services.answer import _classify_answer_complexity, stream_answer_chunks
 from app.services.nl2sql import generate_sql
-from app.services.answer import (
-    stream_answer_chunks,
-    _classify_answer_complexity,
-    ANSWER_MODEL,
-    ANSWER_MODEL_BIG,
-)
 
 log = logging.getLogger(__name__)
 

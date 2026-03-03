@@ -8,9 +8,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from app.config import ANSWER_MODEL, ANSWER_MODEL_BIG
 from app.services.answer import (
-    ANSWER_MODEL,
-    ANSWER_MODEL_BIG,
     TOKEN_BUDGETS,
     _build_answer_messages,
     _classify_answer_complexity,
@@ -162,7 +161,7 @@ def test_token_budget_increases_with_complexity():
 
 @pytest.mark.unit
 async def test_empty_results_returns_without_calling_ollama(mocker):
-    mock_get_client = mocker.patch("app.services.answer._get_answer_client")
+    mock_get_client = mocker.patch("app.services.ollama_client._get_chat_client")
     result = await generate_answer("How many sales?", [])
     mock_get_client.assert_not_called()
     assert result == "No results were found for that query."
@@ -179,7 +178,7 @@ def _setup_mock_client(mocker, response_text: str):
     mock_client = MagicMock()
     mock_client.post = mock_post
 
-    mocker.patch("app.services.answer._get_answer_client", return_value=mock_client)
+    mocker.patch("app.services.ollama_client._get_chat_client", return_value=mock_client)
     return mock_post
 
 
@@ -290,7 +289,7 @@ async def test_fallback_on_big_model_failure(mocker):
     mock_client = MagicMock()
     mock_client.post = mock_post
 
-    mocker.patch("app.services.answer._get_answer_client", return_value=mock_client)
+    mocker.patch("app.services.ollama_client._get_chat_client", return_value=mock_client)
 
     result = await generate_answer("Top products?", rows)
     assert result == "The result has 2 rows."
@@ -312,7 +311,7 @@ async def test_empty_response_from_big_model_uses_deterministic_fallback(mocker)
 
     mock_client = MagicMock()
     mock_client.post = mock_post
-    mocker.patch("app.services.answer._get_answer_client", return_value=mock_client)
+    mocker.patch("app.services.ollama_client._get_chat_client", return_value=mock_client)
 
     result = await generate_answer("Top products?", rows)
     assert call_models == [ANSWER_MODEL_BIG]  # no retry on empty (only on exception)
@@ -330,7 +329,7 @@ async def test_both_models_fail_returns_deterministic_fallback(mocker):
     mock_client = MagicMock()
     mock_client.post = mock_post
 
-    mocker.patch("app.services.answer._get_answer_client", return_value=mock_client)
+    mocker.patch("app.services.ollama_client._get_chat_client", return_value=mock_client)
 
     result = await generate_answer("Top products?", rows)
     assert result.startswith("Top rows: ")

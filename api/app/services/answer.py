@@ -1,36 +1,15 @@
 import json
 import logging
-import os
 from collections.abc import AsyncGenerator
 from typing import Any
 
-import httpx
-
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-ANSWER_MODEL = os.getenv("ANSWER_MODEL", "llama3.2:1b")
-ANSWER_MODEL_BIG = os.getenv("ANSWER_MODEL_BIG", "llama3.2:3b")
+from app.config import ANSWER_MODEL, ANSWER_MODEL_BIG
+from app.services.ollama_client import (
+    call_ollama_chat as _call_ollama_answer,
+    close_clients as close_answer_client,
+)
 
 log = logging.getLogger(__name__)
-
-# Persistent HTTP clients - reuse TCP connections across Ollama calls.
-_answer_client: httpx.AsyncClient | None = None
-
-
-def _get_answer_client() -> httpx.AsyncClient:
-    global _answer_client
-    if _answer_client is None:
-        _answer_client = httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=30.0, read=120.0, write=30.0, pool=5.0),
-            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
-        )
-    return _answer_client
-
-
-async def close_answer_client() -> None:
-    global _answer_client
-    if _answer_client is not None:
-        await _answer_client.aclose()
-        _answer_client = None
 
 
 # Token budgets per shape
@@ -154,28 +133,6 @@ def _render_minimal_from_results(results: list[dict]) -> str:
     top_rows = results[:3]
     row_parts = [_format_row(row) for row in top_rows]
     return _one_line(f"Top rows: {'; '.join(row_parts)}; total_rows={len(results)}.")
-
-
-# Ollama helper
-
-async def _call_ollama_answer(
-    messages: list[dict], model: str, num_predict: int
-) -> str:
-    """POST chat messages to Ollama /api/chat and return the response text."""
-    payload = {
-        "model": model,
-        "messages": messages,
-        "stream": False,
-        "options": {
-            "temperature": 0.0,
-            "num_predict": num_predict,
-            "stop": ["\n\n"],
-        },
-    }
-    client = _get_answer_client()
-    r = await client.post(f"{OLLAMA_BASE_URL}/api/chat", json=payload, timeout=60.0)
-    r.raise_for_status()
-    return r.json().get("message", {}).get("content", "").strip()
 
 
 # Public API

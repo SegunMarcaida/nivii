@@ -52,7 +52,7 @@ async def query_endpoint(
     db: AsyncSession = Depends(get_db),
 ) -> QueryResponse:
     """
-    Translate a natural language question into a PostgreSQL query and return results.
+    Translate a natural language question into SQL and return results.
     """
     log.info("POST /query — question: %s", request.question)
     try:

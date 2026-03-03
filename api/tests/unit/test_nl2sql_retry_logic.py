@@ -6,13 +6,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.services.nl2sql import (
+from app.config import (
+    ARCTIC_DIRECT_ATTEMPTS,
+    MAX_ATTEMPTS,
     OLLAMA_MODEL,
     OLLAMA_MODEL_BASE,
-    MAX_ATTEMPTS,
-    ARCTIC_DIRECT_ATTEMPTS,
-    generate_sql,
 )
+from app.services.nl2sql import generate_sql
 
 
 # Valid flat-table SQL (no JOINs needed with the new schema)
@@ -126,7 +126,7 @@ async def test_result_dict_shape():
 
 @pytest.mark.unit
 async def test_simple_query_uses_base_model():
-    """SIMPLE queries route to Qwen (OLLAMA_MODEL_BASE) on first attempt."""
+    """SIMPLE queries route to Qwen (OLLAMA_MODEL_BASE) on both the planning and SQL gen calls."""
     session = _make_mock_session(explain_fails_on_attempts=[])
     captured_models: list[str] = []
 
@@ -137,8 +137,10 @@ async def test_simple_query_uses_base_model():
     with patch("app.services.nl2sql._call_ollama", side_effect=capture_ollama):
         result = await generate_sql("What is the total revenue?", session)
 
-    assert len(captured_models) == 1
-    assert captured_models[0] == OLLAMA_MODEL_BASE
+    # 2 calls: planning call + SQL generation call — both use Qwen
+    assert len(captured_models) == 2
+    assert captured_models[0] == OLLAMA_MODEL_BASE  # planning
+    assert captured_models[1] == OLLAMA_MODEL_BASE  # SQL gen
     assert result["model"] == OLLAMA_MODEL_BASE
     assert result["complexity"] == "simple"
 
@@ -203,20 +205,26 @@ async def test_fallback_false_on_first_attempt():
 
 @pytest.mark.unit
 async def test_correction_prompt_used_on_retry():
-    """Second _call_ollama invocation receives a prompt containing the error."""
+    """Correction _call_ollama invocation receives a prompt containing the error."""
     session = _make_mock_session(explain_fails_on_attempts=[1])
     captured_prompts: list[str] = []
+    sql_gen_calls = [0]  # count only SQL-generation calls (not the planning call)
 
     async def capture_ollama(prompt: str, model: str = OLLAMA_MODEL, **kwargs) -> str:
         captured_prompts.append(prompt)
-        return OMNISQL_BAD_RESPONSE if len(captured_prompts) == 1 else OMNISQL_RESPONSE
+        is_planning = "-- Planning rules:" in prompt
+        if not is_planning:
+            sql_gen_calls[0] += 1
+        # Return bad SQL only for the first SQL gen call so the correction prompt has BAD_SQL
+        return OMNISQL_BAD_RESPONSE if (not is_planning and sql_gen_calls[0] == 1) else OMNISQL_RESPONSE
 
     with patch("app.services.nl2sql._call_ollama", side_effect=capture_ollama):
         await generate_sql("What are the top products?", session)
 
-    assert len(captured_prompts) == 2
-    # Second prompt is a correction — must contain the failing SQL and the error
-    correction = captured_prompts[1]
+    # 3 calls: planning + SQL gen attempt 1 (bad) + correction (good)
+    assert len(captured_prompts) == 3
+    # Correction prompt (3rd call) must contain the failing SQL and the error
+    correction = captured_prompts[2]
     assert BAD_SQL in correction
     assert "syntax error" in correction.lower() or "mock" in correction
 
@@ -226,15 +234,20 @@ async def test_correction_prompt_uses_qwen_template():
     """Correction prompt on retry must follow the Qwen template structure (no CoT tags)."""
     session = _make_mock_session(explain_fails_on_attempts=[1])
     captured_prompts: list[str] = []
+    sql_gen_calls = [0]
 
     async def capture_ollama(prompt: str, model: str = OLLAMA_MODEL, **kwargs) -> str:
         captured_prompts.append(prompt)
-        return OMNISQL_BAD_RESPONSE if len(captured_prompts) == 1 else OMNISQL_RESPONSE
+        is_planning = "-- Planning rules:" in prompt
+        if not is_planning:
+            sql_gen_calls[0] += 1
+        return OMNISQL_BAD_RESPONSE if (not is_planning and sql_gen_calls[0] == 1) else OMNISQL_RESPONSE
 
     with patch("app.services.nl2sql._call_ollama", side_effect=capture_ollama):
         await generate_sql("What are the top products?", session)
 
-    correction = captured_prompts[1]
+    # Correction is the 3rd call (index 2): planning + SQL gen 1 + correction
+    correction = captured_prompts[2]
     # Qwen correction template: no CoT tags, SQL comment style with -- Fixed query:
     assert "<think>" not in correction
     assert "<answer>" not in correction
@@ -356,3 +369,61 @@ async def test_hard_query_never_uses_qwen():
     assert all(m == OLLAMA_MODEL for m in captured_models), (
         f"Expected all calls to use Arctic, got: {captured_models}"
     )
+
+
+# ── Empty response guard tests ───────────────────────────────────────────────
+
+
+@pytest.mark.unit
+async def test_empty_response_retries_with_original_prompt():
+    """When model returns empty, next attempt uses original prompt (not correction)."""
+    session = _make_mock_session(explain_fails_on_attempts=[])
+    captured_prompts: list[str] = []
+    call_count = 0
+
+    async def capture_ollama(prompt: str, model: str = OLLAMA_MODEL, **kwargs) -> str:
+        nonlocal call_count
+        call_count += 1
+        captured_prompts.append(prompt)
+        # First SQL gen call returns empty; second returns valid SQL
+        if call_count == 1:
+            return ""
+        return ARCTIC_RESPONSE
+
+    with patch("app.services.nl2sql._call_ollama", side_effect=capture_ollama):
+        result = await generate_sql("Rank products by cumulative revenue", session)
+
+    # Both calls should use the original Arctic prompt (not correction)
+    # because empty response means no SQL to correct.
+    assert len(captured_prompts) == 2
+    assert "Task Overview:" in captured_prompts[1]
+    # Correction prompt would contain "Previous SQL attempt that FAILED"
+    assert "Previous SQL attempt that FAILED" not in captured_prompts[1]
+    assert result["attempts"] == 2
+
+
+@pytest.mark.unit
+async def test_empty_response_does_not_run_explain():
+    """Empty response should skip EXPLAIN QUERY PLAN — no point validating empty SQL."""
+    session = _make_mock_session(explain_fails_on_attempts=[])
+    explain_call_count = [0]
+    original_execute = session.execute
+
+    async def counting_execute(stmt, *args, **kwargs):
+        if "EXPLAIN" in str(stmt).upper():
+            explain_call_count[0] += 1
+        return await original_execute(stmt, *args, **kwargs)
+
+    session.execute = counting_execute
+    call_count = 0
+
+    async def empty_then_valid(prompt: str, model: str = OLLAMA_MODEL, **kwargs) -> str:
+        nonlocal call_count
+        call_count += 1
+        return "" if call_count == 1 else ARCTIC_RESPONSE
+
+    with patch("app.services.nl2sql._call_ollama", side_effect=empty_then_valid):
+        await generate_sql("Rank products by cumulative revenue", session)
+
+    # Only 1 EXPLAIN call (for attempt 2), not 2 (skipped for empty attempt 1)
+    assert explain_call_count[0] == 1
