@@ -1,0 +1,66 @@
+services:
+  # Ollama runs NATIVELY on the host for Metal GPU access on macOS.
+  # Start it before docker compose up:
+  #   brew install ollama && ollama serve
+  # For full-Docker mode (CPU only), use docker-compose.docker-ollama.yml instead.
+
+  ingestion:
+    build: ./ingestion
+    restart: "no"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      SQLITE_DB_PATH: /app/data/confectionery.db
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: a-kore/Arctic-Text2SQL-R1-7B
+      OLLAMA_MODEL_BASE: qwen2.5-coder:3b
+      ANSWER_MODEL: llama3.2:1b
+      ANSWER_MODEL_BIG: llama3.2:3b
+    volumes:
+      - ./data.csv:/app/data.csv:ro
+      - sqlitedata:/app/data
+    networks:
+      - nl2sql-network
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    depends_on:
+      ingestion:
+        condition: service_completed_successfully
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: "DEBUG"
+      DATABASE_URL: sqlite+aiosqlite:////app/data/confectionery.db
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: a-kore/Arctic-Text2SQL-R1-7B
+      OLLAMA_MODEL_BASE: qwen2.5-coder:3b
+      ANSWER_MODEL: llama3.2:1b
+      ANSWER_MODEL_BIG: llama3.2:3b
+    volumes:
+      - sqlitedata:/app/data
+    ports:
+      - "8000:8000"
+    networks:
+      - nl2sql-network
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - nl2sql-network
+    environment:
+      NODE_ENV: development
+
+networks:
+  nl2sql-network:
+    driver: bridge
+
+volumes:
+  sqlitedata:

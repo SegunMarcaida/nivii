@@ -1,0 +1,34 @@
+# Full Docker mode — Ollama runs as a container (CPU only on macOS).
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.docker-ollama.yml up
+#
+# This override:
+#   - Adds the ollama container
+#   - Adds ollama to ingestion's depends_on
+#   - Switches OLLAMA_BASE_URL to the container hostname
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - nl2sql-network
+
+  ingestion:
+    depends_on:
+      ollama:
+        condition: service_started
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+
+  api:
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+
+volumes:
+  ollama_data:

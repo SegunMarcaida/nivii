@@ -1,0 +1,902 @@
+[
+  {
+    "question": "Top-selling and bottom-selling product for each waiter",
+    "intent": "extrema_dual",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show best and worst selling product by waiter",
+    "intent": "extrema_dual",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "For every waiter, return highest and lowest quantity product",
+    "intent": "extrema_dual",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "List top and bottom product per employee",
+    "intent": "extrema_dual",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Which item is most and least sold per waiter?",
+    "intent": "extrema_dual",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto mas y menos vendido por cada vendedor",
+    "intent": "extrema_dual",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra el mejor y peor producto por vendedor",
+    "intent": "extrema_dual",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Para cada vendedor, dame el producto de mayor y menor cantidad",
+    "intent": "extrema_dual",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Top y bottom de productos por mesero",
+    "intent": "extrema_dual",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Cual es el articulo mas y menos vendido por vendedor?",
+    "intent": "extrema_dual",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Least sold product for each waiter",
+    "intent": "bottom_n",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lowest selling item by waiter",
+    "intent": "bottom_n",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Worst-selling product per employee",
+    "intent": "bottom_n",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Bottom product by quantity for each waiter",
+    "intent": "bottom_n",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Return the minimum-quantity product for every waiter",
+    "intent": "bottom_n",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto menos vendido por cada vendedor",
+    "intent": "bottom_n",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Articulo de menor venta por vendedor",
+    "intent": "bottom_n",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Peor producto por cantidad para cada mesero",
+    "intent": "bottom_n",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Bottom de productos por vendedor",
+    "intent": "bottom_n",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto de minimo volumen por empleado",
+    "intent": "bottom_n",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Second highest revenue product for each waiter",
+    "intent": "nth_rank",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Third best-selling product by waiter",
+    "intent": "nth_rank",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "2nd product by quantity per waiter",
+    "intent": "nth_rank",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Runner-up revenue item for each waiter",
+    "intent": "nth_rank",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show the third ranked item for every waiter",
+    "intent": "nth_rank",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Segundo producto con mayor ingreso por vendedor",
+    "intent": "nth_rank",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Tercer producto mas vendido por mesero",
+    "intent": "nth_rank",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "2do producto por cantidad para cada vendedor",
+    "intent": "nth_rank",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Subcampeon de ingresos por vendedor",
+    "intent": "nth_rank",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra el tercer item rankeado por cada vendedor",
+    "intent": "nth_rank",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "If tie, pick alphabetically first top product",
+    "intent": "tie_policy",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Resolve top-product ties using product name",
+    "intent": "tie_policy",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Deterministic tie-break for highest quantity product",
+    "intent": "tie_policy",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "When tied, return stable-ordered top item",
+    "intent": "tie_policy",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Top product with alphabetical tie policy",
+    "intent": "tie_policy",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Si hay empate, devuelve el producto top alfabetico",
+    "intent": "tie_policy",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Resolver empates del producto top por nombre",
+    "intent": "tie_policy",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Desempate deterministico para producto de mayor cantidad",
+    "intent": "tie_policy",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Cuando haya empate, devolver item estable",
+    "intent": "tie_policy",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto top con politica de desempate alfabetico",
+    "intent": "tie_policy",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Products sold in every month of dataset",
+    "intent": "all_periods_coverage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Which products appear each month",
+    "intent": "all_periods_coverage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Items present in all calendar months",
+    "intent": "all_periods_coverage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Products with sales every month",
+    "intent": "all_periods_coverage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show products sold across all months",
+    "intent": "all_periods_coverage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Productos vendidos en todos los meses",
+    "intent": "all_periods_coverage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Que productos aparecen cada mes",
+    "intent": "all_periods_coverage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Articulos presentes en todos los meses calendario",
+    "intent": "all_periods_coverage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Productos con ventas todos los meses",
+    "intent": "all_periods_coverage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra productos vendidos durante todos los meses",
+    "intent": "all_periods_coverage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "7-day moving average revenue",
+    "intent": "rolling_window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Rolling 7 day total revenue",
+    "intent": "rolling_window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Daily revenue with rolling window",
+    "intent": "rolling_window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show running average over last 7 days",
+    "intent": "rolling_window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Revenue smoothed by 7-day window",
+    "intent": "rolling_window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Promedio movil de ingresos de 7 dias",
+    "intent": "rolling_window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Total de ingresos en ventana movil de 7 dias",
+    "intent": "rolling_window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Ingreso diario con ventana rodante",
+    "intent": "rolling_window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra promedio corrido de ultimos 7 dias",
+    "intent": "rolling_window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Ingresos suavizados por ventana de 7 dias",
+    "intent": "rolling_window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Week-over-week revenue change",
+    "intent": "period_delta",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Month-over-month delta in gross revenue",
+    "intent": "period_delta",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Revenue difference vs previous month",
+    "intent": "period_delta",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Compare this week to previous week revenue",
+    "intent": "period_delta",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show WoW and MoM growth",
+    "intent": "period_delta",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Cambio semanal de ingresos",
+    "intent": "period_delta",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Delta mensual del ingreso bruto",
+    "intent": "period_delta",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Diferencia de ingresos contra mes anterior",
+    "intent": "period_delta",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Comparar ingresos de esta semana con la previa",
+    "intent": "period_delta",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra crecimiento WoW y MoM",
+    "intent": "period_delta",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Median ticket value per waiter",
+    "intent": "distribution_grouped",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Percentile 90 ticket total by waiter",
+    "intent": "distribution_grouped",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Decile distribution of ticket value per waiter",
+    "intent": "distribution_grouped",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Grouped percentile of ticket totals by employee",
+    "intent": "distribution_grouped",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Per-waiter distribution summary for ticket value",
+    "intent": "distribution_grouped",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Mediana de valor de ticket por vendedor",
+    "intent": "distribution_grouped",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Percentil 90 del total de ticket por vendedor",
+    "intent": "distribution_grouped",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Distribucion por deciles del valor de ticket por vendedor",
+    "intent": "distribution_grouped",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Percentil agrupado de totales de ticket por empleado",
+    "intent": "distribution_grouped",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Resumen de distribucion por vendedor del valor de ticket",
+    "intent": "distribution_grouped",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Waiters with zero forward-sales tickets",
+    "intent": "zero_activity",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Employees with no FCB/FCA tickets",
+    "intent": "zero_activity",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Who has no forward sales activity",
+    "intent": "zero_activity",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "List waiters without forward sale transactions",
+    "intent": "zero_activity",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Find sales staff with zero forward tickets",
+    "intent": "zero_activity",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Vendedores con cero tickets de venta forward",
+    "intent": "zero_activity",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Empleados sin tickets FCB/FCA",
+    "intent": "zero_activity",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Quien no tiene actividad de venta forward",
+    "intent": "zero_activity",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lista meseros sin transacciones de venta forward",
+    "intent": "zero_activity",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Encontrar vendedores con cero tickets forward",
+    "intent": "zero_activity",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Top product",
+    "intent": "ambiguity_disambiguation",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Most popular item",
+    "intent": "ambiguity_disambiguation",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Best product overall",
+    "intent": "ambiguity_disambiguation",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Top item defaulting to quantity",
+    "intent": "ambiguity_disambiguation",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Highest product without metric specified",
+    "intent": "ambiguity_disambiguation",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto top",
+    "intent": "ambiguity_disambiguation",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Articulo mas popular",
+    "intent": "ambiguity_disambiguation",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Mejor producto general",
+    "intent": "ambiguity_disambiguation",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Item top por defecto en cantidad",
+    "intent": "ambiguity_disambiguation",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Producto mas alto sin metrica explicita",
+    "intent": "ambiguity_disambiguation",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Products whose name contains choco",
+    "intent": "text_match",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Items starting with alfajor",
+    "intent": "text_match",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Find products matching bombon text",
+    "intent": "text_match",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Name filter for products containing dulce",
+    "intent": "text_match",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Product name like chocolate",
+    "intent": "text_match",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Productos cuyo nombre contiene choco",
+    "intent": "text_match",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Articulos que empiezan con alfajor",
+    "intent": "text_match",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Buscar productos que coincidan con bombon",
+    "intent": "text_match",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Filtro de nombre para productos con dulce",
+    "intent": "text_match",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Nombre de producto like chocolate",
+    "intent": "text_match",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Rank products by total revenue",
+    "intent": "window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Cumulative daily revenue",
+    "intent": "window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lag of daily revenue",
+    "intent": "window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lead revenue by day",
+    "intent": "window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Running total by date",
+    "intent": "window",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Rankear productos por ingreso total",
+    "intent": "window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Ingreso diario acumulado",
+    "intent": "window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lag de ingresos diarios",
+    "intent": "window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Lead de ingresos por dia",
+    "intent": "window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Total corrido por fecha",
+    "intent": "window",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Products never returned",
+    "intent": "anti_join",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Waiters without returns",
+    "intent": "anti_join",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Items with no return tickets",
+    "intent": "anti_join",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Products absent from credit notes",
+    "intent": "anti_join",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Show entities never present in returns",
+    "intent": "anti_join",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Productos nunca devueltos",
+    "intent": "anti_join",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Vendedores sin devoluciones",
+    "intent": "anti_join",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Articulos sin tickets de devolucion",
+    "intent": "anti_join",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Productos ausentes en notas de credito",
+    "intent": "anti_join",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Muestra entidades nunca presentes en devoluciones",
+    "intent": "anti_join",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Return rate by product",
+    "intent": "return_rate",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Refund percentage per waiter",
+    "intent": "return_rate",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Rate of return tickets",
+    "intent": "return_rate",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Return ticket percentage by employee",
+    "intent": "return_rate",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Cancellation rate by item",
+    "intent": "return_rate",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Tasa de devolucion por producto",
+    "intent": "return_rate",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Porcentaje de reembolso por vendedor",
+    "intent": "return_rate",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Tasa de tickets de devolucion",
+    "intent": "return_rate",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Porcentaje de tickets de devolucion por empleado",
+    "intent": "return_rate",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Tasa de cancelacion por articulo",
+    "intent": "return_rate",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Revenue share by product",
+    "intent": "percentage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Percent contribution of each waiter",
+    "intent": "percentage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Product percentage of gross revenue",
+    "intent": "percentage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Share of total quantity by item",
+    "intent": "percentage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Proportion of sales by day",
+    "intent": "percentage",
+    "language": "en",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Participacion de ingresos por producto",
+    "intent": "percentage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Porcentaje de contribucion de cada vendedor",
+    "intent": "percentage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Porcentaje del ingreso bruto por producto",
+    "intent": "percentage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Participacion de cantidad total por articulo",
+    "intent": "percentage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  },
+  {
+    "question": "Proporcion de ventas por dia",
+    "intent": "percentage",
+    "language": "es",
+    "corner_case": "coverage_v2"
+  }
+]
