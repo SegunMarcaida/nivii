@@ -1,4 +1,4 @@
-# nivii-challenge — NL2SQL Confectionery Chatbot
+NL2SQL Confectionery Chatbot
 
 A fully-local, Dockerized natural language to SQL system for confectionery retail POS data. Ask questions in plain English; the system generates SQL, runs it against a SQLite database, and returns a human-readable answer — all without any cloud API calls.
 
